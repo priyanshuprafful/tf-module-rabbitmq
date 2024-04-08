@@ -32,22 +32,11 @@ resource "aws_route53_record" "main" {
 }
 
 resource "aws_security_group" "main" {
-  name = "rabbitmq-${var.env}"
-  description = "rabbotmq-${var.env}-description"
-  vpc_id = var.vpc_id
-
-
-  ingress {
-
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.bastion_cidr
-  }
+  name        = "rabbitmq-${var.env}"
+  description = "rabbitmq-${var.env}"
+  vpc_id      = var.vpc_id
 
   ingress {
-
     description = "RABBITMQ"
     from_port   = 5672
     to_port     = 5672
@@ -55,17 +44,24 @@ resource "aws_security_group" "main" {
     cidr_blocks = var.allow_subnets
   }
 
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.bastion_cidr
+  }
+
   egress {
-    from_port = 0
-    to_port   = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   tags = merge(
-  var.tags ,
-  { Name = "rabbitmq-${var.env}"}
+    var.tags,
+    { Name = "rabbitmq-${var.env}" }
   )
-
-  }
+}
