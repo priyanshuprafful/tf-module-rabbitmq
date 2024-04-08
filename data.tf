@@ -4,3 +4,7 @@ data "aws_ami" "ami" {
   owners = ["self"]
 
 }
+
+data "aws_route53_zone" "domain" {
+  name = var.dns_domain
+}
