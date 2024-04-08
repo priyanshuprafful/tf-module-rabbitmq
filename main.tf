@@ -4,6 +4,7 @@ resource "aws_spot_instance_request" "rabbitmq" {
   subnet_id = var.subnet_ids[0]
   wait_for_fulfillment = true
   vpc_security_group_ids = [aws_security_group.main.id]
+  iam_instance_profile = aws_iam_instance_profile.main.name
 
   user_data = base64encode(templatefile("${path.module}/userdata.sh",
     {
