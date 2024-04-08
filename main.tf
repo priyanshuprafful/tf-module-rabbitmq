@@ -1,36 +1,38 @@
 resource "aws_spot_instance_request" "rabbitmq" {
-  ami = data.aws_ami.ami.id
-  instance_type = var.instance_type
-  subnet_id = var.subnet_ids[0]
-  wait_for_fulfillment = true
+  ami                    = data.aws_ami.ami.id
+  instance_type          = var.instance_type
+  subnet_id              = var.subnet_ids[0]
+  wait_for_fulfillment   = true
   vpc_security_group_ids = [aws_security_group.main.id]
-  iam_instance_profile = aws_iam_instance_profile.main.name
+  iam_instance_profile   = aws_iam_instance_profile.main.name
 
-  user_data = base64encode(templatefile("${path.module}/userdata.sh",
-    {
-      component = "rabbitmq"
-      env = var.env
-    }))
+  user_data = base64encode(templatefile("${path.module}/userdata.sh", {
+    component = "rabbitmq"
+    env       = var.env
+  }))
 
   tags = merge(
-    var.tags ,
-    { Name = "${var.env}-rabbitmq"}
+    var.tags,
+    { Name = "${var.env}-rabbitmq" }
   )
 }
-resource "aws_ec2_tag" "name_tag" {
+
+resource "aws_ec2_tag" "name-tag" {
   key         = "Name"
   resource_id = aws_spot_instance_request.rabbitmq.spot_instance_id
   value       = "rabbitmq-${var.env}"
 }
 
 
+
 resource "aws_route53_record" "main" {
-  zone_id = data.aws_route53_zone.domain.zone_id #saraldevops.online ki zone id mil jaegi
+  zone_id = data.aws_route53_zone.domain.zone_id
   name    = "rabbitmq-${var.env}.${var.dns_domain}"
   type    = "A"
-  ttl     = 30 # response time
-  records = [aws_spot_instance_request.rabbitmq.private_ip] # to get the records
+  ttl     = 30
+  records = [aws_spot_instance_request.rabbitmq.private_ip]
 }
+
 
 resource "aws_security_group" "main" {
   name        = "rabbitmq-${var.env}"
@@ -66,3 +68,5 @@ resource "aws_security_group" "main" {
     { Name = "rabbitmq-${var.env}" }
   )
 }
+
+
