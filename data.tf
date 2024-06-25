@@ -1,8 +1,14 @@
-data "aws_ami" "ami" {
-  most_recent = true
-  name_regex = "devops-practice-with-ansible-my-local-image"
-  owners = ["self"]
+#data "aws_ami" "ami" {
+#  most_recent = true
+#  name_regex = "devops-practice-with-ansible-my-local-image"
+#  owners = ["self"]
+#
+#}
 
+data "aws_ami" "ami_my_name" {
+  most_recent      = true
+  name_regex       = "Centos-8-DevOps-Practice"
+  owners           = ["973714476881"]
 }
 
 data "aws_route53_zone" "domain" {
